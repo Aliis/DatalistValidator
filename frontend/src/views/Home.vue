@@ -9,7 +9,7 @@
                                 <p>{{ dataLoadingError }}</p>
                             </v-card-text>
                             <v-card-actions class="buttons">
-                                <div class="button-wrapper"><v-btn @click="showData(true)" flat color="orange">Reload
+                                <div class="button-wrapper"><v-btn @click="showData()" flat color="orange">Reload
                                 </v-btn></div>
                             </v-card-actions>
                         </v-card>
@@ -37,7 +37,7 @@
             return {
                 dataLoadingError: '',
                 dataCounter: 5,
-                perPage: 5,
+                perPage: 50,
                 page: 1,
                 url: 'http://fe-test.guardtime.com/documents',
                 alert: true,
@@ -58,6 +58,7 @@
                 .then((res) => {
                     this.showDataLoader = false
                     this.$store.state.dataItems = this.$store.state.dataItems.concat(res.data.data);
+                    console.log(this.$store.state.dataItems.length)
                 })
                 .catch((error) => {
                     if (state === true)  {
@@ -72,7 +73,7 @@
                     let bottomOfWindow = (window.innerHeight + Math.ceil(window.pageYOffset)) >=
                         document.body.offsetHeight;
 
-                    if (bottomOfWindow) {
+                    if (bottomOfWindow && !this.showDataLoader) {
                         this.page+=1;
                         this.showData(true)
                         this.dataCounter+=this.perPage;
@@ -96,7 +97,7 @@
 
                 that.startIndex += perIteration;
                 if (this.$store.state.dataItems.length > that.startIndex) {
-                    setTimeout(that.$refs.cardComponent.validateAllDocs, 5500);
+                    setTimeout(that.validateAllDocs, 5500);
                 } else {
                     that.startIndex = 0;
                 }
